@@ -20,24 +20,27 @@ const CharacterDetails = ({ route }) => {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.characterName}>{character.fullName}</Text>
       <Image
         source={{ uri: character.imageUrl }}
         style={styles.characterImage}
       />
-      <Text style={styles.characterName}>{character.fullName}</Text>
-      <Text style={styles.characterId}>ID: {character.id}</Text>
+
+      {/* <Text style={styles.characterId}>ID: {character.id}</Text> */}
       <View style={styles.detailContainor}>
         <View style={{ flexDirection: "column" }}>
+          <Text style={styles.detailTags}>Full Name:</Text>
           <Text style={styles.detailTags}>First Name:</Text>
           <Text style={styles.detailTags}>Last Name:</Text>
           <Text style={styles.detailTags}>Title:</Text>
           <Text style={styles.detailTags}>Family:</Text>
         </View>
         <View style={{ flexDirection: "column" }}>
-          <Text style={styles.characterDetails}>{character.title}</Text>
-          <Text style={styles.characterDetails}>{character.family}</Text>
+          <Text style={styles.characterDetails}>{character.fullName}</Text>
           <Text style={styles.characterDetails}>{character.firstName}</Text>
           <Text style={styles.characterDetails}>{character.lastName}</Text>
+          <Text style={styles.characterDetails}>{character.title}</Text>
+          <Text style={styles.characterDetails}>{character.family}</Text>
         </View>
       </View>
     </View>
@@ -59,7 +62,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   characterName: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "bold",
     marginTop: 16,
   },
@@ -72,10 +75,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     shadowColor: "#000",
     justifyContent: "center",
+    alignItems: "center",
     width: 300,
     height: 200,
     borderRadius: 10,
     boarderWidth: 1,
+    marginTop: 20,
     margin: 10,
     padding: 10,
   },

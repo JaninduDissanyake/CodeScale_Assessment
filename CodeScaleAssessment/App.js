@@ -44,34 +44,38 @@ function InsideLayout() {
         name="settings"
         size={30}
         color="black"
-        style={{ marginRight: 20 }}
+        style={{ marginRight: 10 }}
       />
     </TouchableOpacity>
   );
 
   return (
-    <InsideStack.Navigator>
+    <InsideStack.Navigator
+      screenOptions={{
+        headerRight: () => headerRightButton,
+      }}
+    >
       <InsideStack.Screen
         name="List"
         component={CharactersListScreen}
         options={{
-          headerTitle: "Game of Thrones Characters",
-          headerRight: () => headerRightButton,
+          headerTitle: "THRONEPEDIA",
         }}
       />
       <InsideStack.Screen
         name="CharacterDetails"
         component={CharacterDetailsScreen}
         options={({ route }) => ({
-          title: route.params.character.fullName,
-          headerRight: () => headerRightButton,
+          title: "",
+          headerBackVisible: true,
         })}
       />
       <InsideStack.Screen
         name="Profile"
         component={ProfileScreen}
         options={{
-          headerBackVisible: false,
+          headerBackVisible: true,
+          headerRight: () => null,
         }}
       />
     </InsideStack.Navigator>
@@ -84,9 +88,7 @@ export default function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    console.log("Inside useEffect");
     const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (user) => {
-      console.log("user", user);
       setUser(user);
     });
 

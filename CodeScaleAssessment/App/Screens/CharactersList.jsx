@@ -78,6 +78,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 16,
+    borderRadius: 8,
+    backgroundColor: "#fff",
+    height: 100,
+    width: 400,
+    padding: 16,
   },
   characterImage: {
     width: 80,
