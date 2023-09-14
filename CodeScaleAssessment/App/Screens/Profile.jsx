@@ -3,11 +3,13 @@
 import { StyleSheet, Image, Text, View, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useTheme, useNavigation } from "@react-navigation/native";
+import { useToast } from "react-native-toast-notifications";
 import { FIREBASE_AUTH } from "../Config/FirebaseConfig";
 
 const Profile = () => {
   const navigation = useNavigation();
   const [user, setUser] = useState("");
+  const toast = useToast();
 
   useEffect(() => {
     const unsubscribe = FIREBASE_AUTH.onAuthStateChanged(
@@ -28,6 +30,9 @@ const Profile = () => {
       navigation.reset({
         index: 0,
         routes: [{ name: "Login" }],
+      });
+      toast.show("Logged out successfully", {
+        type: "success",
       });
     } catch (error) {
       console.error("Error logging out:", error);
@@ -59,8 +64,7 @@ const Profile = () => {
     </View>
   );
 };
-//myemail1@gmail.com
-//password
+
 export default Profile;
 
 const styles = StyleSheet.create({

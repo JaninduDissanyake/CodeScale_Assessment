@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { FIREBASE_AUTH } from "../Config/FirebaseConfig";
-import Axios from "axios";
+import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 
 const CharactersList = () => {
@@ -29,7 +29,8 @@ const CharactersList = () => {
   }, []);
 
   useEffect(() => {
-    Axios.get("https://thronesapi.com/api/v2/Characters")
+    axios
+      .get("https://thronesapi.com/api/v2/Characters")
       .then((response) => {
         setCharacters(response.data);
       })

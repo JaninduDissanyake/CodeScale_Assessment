@@ -17,6 +17,7 @@ import { FIREBASE_AUTH } from "../Config/FirebaseConfig";
 import { useTheme, useNavigation } from "@react-navigation/native";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { Entypo } from "@expo/vector-icons";
+import { useToast } from "react-native-toast-notifications";
 
 const SignUp = () => {
   const [name, setName] = useState(""); // to store name
@@ -27,6 +28,7 @@ const SignUp = () => {
   const [passwordVisible, setPasswordVisible] = useState(true); // to show/hide password
   const auth = FIREBASE_AUTH; // firebase auth object
   const [errorMsg, setErrorMsg] = useState(null);
+  const toast = useToast();
   const navigation = useNavigation();
   const [showPasswordIndicators, setShowPasswordIndicators] = useState(false);
 
@@ -45,10 +47,20 @@ const SignUp = () => {
 
   const signUpFunc = async () => {
     if (!name || !email || !password || !confirmPassword) {
-      alert("All fields are required.");
+      toast.show("All fields are required!", {
+        type: "danger",
+        duration: 2000,
+        dismissible: true,
+        position: "top",
+      });
     }
     if (password !== confirmPassword) {
-      alert("Passwords do not match.");
+      toast.show("Passwords do not match!", {
+        type: "danger",
+        duration: 2000,
+        dismissible: true,
+        position: "top",
+      });
       return;
     }
     setLoading(true);
@@ -59,8 +71,18 @@ const SignUp = () => {
         password
       );
 
+      // Update the user's display name
+      await updateProfile(auth.currentUser, {
+        displayName: name,
+      });
+
       console.log(response);
-      alert("Sign Up Success");
+      toast.show("Sign Up Success!", {
+        type: "success",
+        duration: 2000,
+        dismissible: true,
+        position: "top",
+      });
       navigation.navigate("Inside");
     } catch (error) {
       console.log(error);
@@ -137,7 +159,11 @@ const SignUp = () => {
             value={password}
             placeholder="Password"
             autoCapitalize="none"
-            onChangeText={(text) => setPassword(text)}
+            onChangeText={(text) => {
+              setPassword(text);
+              handlePasswordFocus(); // Call handlePasswordFocus to show the indicators
+              validatePassword(text); // Call validatePassword with the updated text
+            }}
             onFocus={handlePasswordFocus}
             onBlur={handlePasswordBlur}
           ></TextInput>

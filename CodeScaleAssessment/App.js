@@ -7,7 +7,7 @@ import {
   useNavigation,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { StatusBar } from "expo-status-bar";
+import { ToastProvider } from "react-native-toast-notifications";
 import {
   StyleSheet,
   Text,
@@ -50,16 +50,13 @@ function InsideLayout() {
   );
 
   return (
-    <InsideStack.Navigator
-      screenOptions={{
-        headerRight: () => headerRightButton,
-      }}
-    >
+    <InsideStack.Navigator>
       <InsideStack.Screen
         name="List"
         component={CharactersListScreen}
         options={{
           headerTitle: "THRONEPEDIA",
+          headerRight: () => headerRightButton,
         }}
       />
       <InsideStack.Screen
@@ -68,6 +65,7 @@ function InsideLayout() {
         options={({ route }) => ({
           title: "",
           headerBackVisible: true,
+          headerRight: () => headerRightButton,
         })}
       />
       <InsideStack.Screen
@@ -99,25 +97,27 @@ export default function App() {
   }, []);
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName={user ? "Inside" : "Login"}>
-        <Stack.Screen
-          name="Inside"
-          component={InsideLayout}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="SignUp"
-          component={SignUpScreen}
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <ToastProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName={user ? "Inside" : "Login"}>
+          <Stack.Screen
+            name="Inside"
+            component={InsideLayout}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Login"
+            component={LoginScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="SignUp"
+            component={SignUpScreen}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ToastProvider>
   );
 }
 

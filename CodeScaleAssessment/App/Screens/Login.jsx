@@ -14,12 +14,14 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { FIREBASE_AUTH } from "../Config/FirebaseConfig";
+import { useToast } from "react-native-toast-notifications";
 import { useTheme, useNavigation } from "@react-navigation/native";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { Entypo } from "@expo/vector-icons";
 
 const Login = () => {
   //const colors = useTheme().colors;
+  const toast = useToast();
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -46,12 +48,17 @@ const Login = () => {
     setLoading(true);
     try {
       const response = await signInWithEmailAndPassword(auth, email, password);
-      console.log(response);
-      alert("Sign In Success");
       navigation.navigate("Inside");
+      toast.show("Welcome Back!", {
+        type: "success",
+        duration: 2000,
+        dismissible: true,
+      });
     } catch (error) {
       console.log(error);
-      alert("Sign In Failed" + error.message);
+      toast.show("Login Unsuccessful", {
+        type: "danger",
+      });
       handleLogout();
     } finally {
       setLoading(false);
