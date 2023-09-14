@@ -36,3 +36,5 @@ This React Native app, built with Expo and Firebase authentication, provides a s
   npm start
 
 - I have not implemented the voice-to-text feature, which is required on the assessment.
+
+Screen Capture Google Drive link - https://drive.google.com/drive/folders/15xm1xGG_2nTj9nQD0WomALkA3KZO9JnQ?usp=sharing
