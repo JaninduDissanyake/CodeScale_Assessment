@@ -1,29 +1,26 @@
 /** @format */
 
-import {
-  StyleSheet,
-  TextInput,
-  Text,
-  View,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, Image, Text, View, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useTheme, useNavigation } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FIREBASE_AUTH } from "../Config/FirebaseConfig";
 
 const Profile = () => {
   const navigation = useNavigation();
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState("");
 
-  // // Fetch the currently authenticated user's email
-  // useEffect(() => {
-  //   const currentUser = FIREBASE_AUTH.currentUser;
-  //   console.log("currentUser:", currentUser.email, currentUser.displayName);
-  //   if (currentUser) {
-  //     setUser(currentUser);
-  //   }
-  // }, []);
+  useEffect(() => {
+    const unsubscribe = FIREBASE_AUTH.onAuthStateChanged(
+      (authenticatedUser) => {
+        if (authenticatedUser) {
+          setUser(authenticatedUser);
+        } else {
+          setUser(null);
+        }
+      }
+    );
+    return () => unsubscribe();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -38,14 +35,24 @@ const Profile = () => {
   };
   return (
     <View style={styles.containor}>
-      <View style={styles.textField}>
-        <Text style={styles.labelText}>Name</Text>
-        {/* <Text style={styles.text}>{user}</Text> */}
-      </View>
-      <View style={styles.textField}>
-        <Text style={styles.labelText}>Email</Text>
-        {/* <Text style={styles.text}>{user}</Text> */}
-      </View>
+      <Image
+        source={require("../../assets/Thronepedia-removebg.png")} // Local file path
+        style={{ width: 200, height: 200, alignSelf: "center" }}
+      />
+      {user ? (
+        <>
+          <View style={styles.textField}>
+            <Text style={styles.labelText}>Name</Text>
+            <Text style={styles.text}>{user.displayName || "N/A"}</Text>
+          </View>
+          <View style={styles.textField}>
+            <Text style={styles.labelText}>Email</Text>
+            <Text style={styles.text}>{user.email}</Text>
+          </View>
+        </>
+      ) : (
+        <Text>Loading user information...</Text>
+      )}
       <TouchableOpacity onPress={handleLogout} style={styles.signOutButton}>
         <Text style={styles.buttonText}>Log Out</Text>
       </TouchableOpacity>
@@ -58,7 +65,7 @@ export default Profile;
 
 const styles = StyleSheet.create({
   containor: {
-    flex: 1,
+    // flex: 1,
     justifyContent: "center",
     marginHorizontal: 20,
   },
@@ -87,7 +94,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   text: {
-    fontSize: 15,
+    fontSize: 18,
     marginTop: 5,
   },
 });

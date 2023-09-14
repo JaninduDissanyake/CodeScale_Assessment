@@ -10,13 +10,13 @@ import {
   Touchable,
   TouchableOpacity,
   View,
+  Image,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FIREBASE_AUTH } from "../Config/FirebaseConfig";
 import { useTheme, useNavigation } from "@react-navigation/native";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { Entypo } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SignUp = () => {
   const [name, setName] = useState(""); // to store name
@@ -26,8 +26,22 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false); // to show loading indicator
   const [passwordVisible, setPasswordVisible] = useState(true); // to show/hide password
   const auth = FIREBASE_AUTH; // firebase auth object
-  const [errormMsg, setErrorMsg] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
   const navigation = useNavigation();
+  const [showPasswordIndicators, setShowPasswordIndicators] = useState(false);
+
+  const [hasLowerCase, setHasLowerCase] = useState(false);
+  const [hasUpperCase, setHasUpperCase] = useState(false);
+  const [hasNumber, setHasNumber] = useState(false);
+  const [isLengthValid, setIsLengthValid] = useState(false);
+
+  // Password validation function
+  const validatePassword = (password) => {
+    setHasLowerCase(/[a-z]/.test(password));
+    setHasUpperCase(/[A-Z]/.test(password));
+    setHasNumber(/[0-9]/.test(password));
+    setIsLengthValid(password.length >= 8);
+  };
 
   const signUpFunc = async () => {
     if (!name || !email || !password || !confirmPassword) {
@@ -44,11 +58,7 @@ const SignUp = () => {
         email,
         password
       );
-      await updateProfile(auth.currentUser, {
-        displayName: name,
-      });
-      await AsyncStorage.setItem("displayName", name);
-      await AsyncStorage.setItem("email", email);
+
       console.log(response);
       alert("Sign Up Success");
       navigation.navigate("Inside");
@@ -56,6 +66,7 @@ const SignUp = () => {
       console.log(error);
       setErrorMsg(error.message);
       alert("Sign Up Failed" + error.message);
+      handleReload();
     } finally {
       setLoading(false);
     }
@@ -77,10 +88,27 @@ const SignUp = () => {
   const handleLoginBtn = () => {
     navigation.navigate("Login");
   };
+
+  const handlePasswordFocus = () => {
+    setShowPasswordIndicators(true); // Show indicators when focused
+    validatePassword(password);
+  };
+
+  const handlePasswordBlur = () => {
+    setShowPasswordIndicators(false); // Hide indicators when blurred
+  };
+
   return (
     <View style={styles.containor}>
       <KeyboardAvoidingView behavior="padding">
-        <Text style={{ textAlign: "center", marginTop: 20 }}>Sign Up</Text>
+        <Image
+          source={require("../../assets/Thronepedia-removebg.png")} // Local file path
+          style={{
+            width: 200,
+            height: 200,
+            alignSelf: "center",
+          }}
+        />
 
         <TextInput
           label={"Name"}
@@ -90,6 +118,7 @@ const SignUp = () => {
           autoCapitalize="none"
           onChangeText={(text) => setName(text)}
         ></TextInput>
+
         <TextInput
           label={"Email"}
           style={styles.input}
@@ -109,6 +138,8 @@ const SignUp = () => {
             placeholder="Password"
             autoCapitalize="none"
             onChangeText={(text) => setPassword(text)}
+            onFocus={handlePasswordFocus}
+            onBlur={handlePasswordBlur}
           ></TextInput>
           <Entypo
             name={passwordVisible ? "eye" : "eye-with-line"}
@@ -137,6 +168,28 @@ const SignUp = () => {
             onPress={togglePasswordVisibility}
           />
         </View>
+
+        {/* Password validation indicators */}
+        {showPasswordIndicators && (
+          <View style={styles.passwordIndicatorsContainor}>
+            <View style={styles.passwordIndicators}>
+              <Text style={styles.passwordIndicatorsText}>
+                {hasLowerCase ? "✔️" : "❌"} Lowercase
+              </Text>
+              <Text style={styles.passwordIndicatorsText}>
+                {hasNumber ? "✔️" : "❌"} Number
+              </Text>
+            </View>
+            <View style={styles.passwordIndicators}>
+              <Text style={styles.passwordIndicatorsText}>
+                {hasUpperCase ? "✔️" : "❌"} Uppercase
+              </Text>
+              <Text style={styles.passwordIndicatorsText}>
+                {isLengthValid ? "✔️" : "❌"} Min. 8 characters
+              </Text>
+            </View>
+          </View>
+        )}
 
         {loading ? (
           <ActivityIndicator size="large" color="#00ff00" />
@@ -203,7 +256,8 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 40,
     backgroundColor: "#fff",
-    marginLeft: 7,
+    marginLeft: 10,
+    fontSize: 15,
   },
   eyeIcon: {
     padding: 10,
@@ -215,5 +269,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 10,
     marginVertical: 10,
+  },
+  passwordIndicatorsContainor: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  passwordIndicators: {
+    flexDirection: "column",
+    paddingHorizontal: 10,
+    marginVertical: 10,
+  },
+  passwordIndicatorsText: {
+    fontWeight: "bold",
+    marginVertical: 8,
   },
 });

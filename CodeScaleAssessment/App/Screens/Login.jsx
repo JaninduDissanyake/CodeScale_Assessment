@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   View,
+  Image,
 } from "react-native";
 import React, { useState } from "react";
 import { FIREBASE_AUTH } from "../Config/FirebaseConfig";
@@ -68,6 +69,11 @@ const Login = () => {
   return (
     <View style={styles.containor}>
       <KeyboardAvoidingView behavior="padding">
+        <Image
+          source={require("../../assets/Thronepedia-removebg.png")} // Local file path
+          style={{ width: 200, height: 200, alignSelf: "center" }}
+        />
+
         <TextInput
           style={styles.input}
           value={email}
@@ -75,6 +81,7 @@ const Login = () => {
           autoCapitalize="none"
           onChangeText={(text) => setEmail(text)}
         ></TextInput>
+
         {/* password field */}
         <View style={styles.inputContainer}>
           <TextInput
@@ -149,7 +156,8 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 45,
     backgroundColor: "#fff",
-    marginLeft: 7,
+    marginLeft: 10,
+    fontSize: 15,
   },
   eyeIcon: {
     padding: 10,
